@@ -1,0 +1,98 @@
+# https://gist.github.com/joffilyfe/1a99250cb74bb75e29cbe8d6ca8ceedb
+version: '3'
+networks:
+  default:
+    external:
+      #name: ${DEFAULT_NETWORK}
+      name: gitea-network
+
+volumes:
+  vol_portainer: 
+    driver: local
+  gitea-data:
+  db:
+  drone-db:
+
+services:
+  portainer:                         
+    image: portainer/portainer:latest
+    ports:         
+      - 9910:9000                              
+    volumes:                                     
+      - /var/run/docker.sock:/var/run/docker.sock
+#
+  gitea-server:
+    image: gitea/gitea:latest
+#    networks:
+#      - gitea-network
+    ports:
+      - 8380:3000
+    volumes:
+      - gitea-data:/data
+      - ./data:/data/gitea
+    restart: always
+    external_links:
+      - gitea-db
+    depends_on:
+      - gitea-db
+#
+  gitea-db:
+    image: postgres:alpine
+#    networks:
+#      - gitea-network
+    ports:
+      - 5440:5432
+    restart: always
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=gitea
+#
+  drone-server:
+    image: drone/drone:0.8.5
+#    networks:
+#      - gitea-network
+    ports:
+      #- 80:8000
+      #- 9000
+      - 8381:8000
+      - 9000:9000
+    volumes:
+#      - /var/lib/drone:/var/lib/drone/
+      - /tmp/lib/drone:/var/lib/drone/
+    restart: always
+    environment:
+      - DRONE_OPEN=true
+      - DRONE_HOST=http://drone-server:8381
+        #Set to true to enable the Gitea driver.
+      - DRONE_GITEA=true
+        #Gitea server address.
+      - DRONE_GITEA_URL=http://gitea-server:3000/ 
+      #- DRONE_GITEA_URL=http://gitea-server:8380/ 
+      - DRONE_SECRET=YWJjZDEyMzQ=
+        # Optional. Use a single machine account username to clone all repositories.
+      - DRONE_GITEA_GIT_USERNAME=taitd
+        #Optional. Use a single machine account password to clone all repositories.
+      - DRONE_GITEA_GIT_PASSWORD=1collective
+        Set to true if Gitea is running in private mode.
+      - DRONE_GITEA_PRIVATE_MODE=false
+        #Set to true to disable SSL verification.
+      - DRONE_GITEA_SKIP_VERIFY=false
+      - DRONE_ADMIN=taitd
+      #- DRONE_NETWORK=${DEFAULT_NETWORK}
+      - DRONE_NETWORK=gitea-network
+#
+  drone-agent:
+    image: drone/agent:0.8.5
+#    networks:
+#      - gitea-network
+    command: agent
+    restart: always
+    depends_on:
+      - drone-server
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DRONE_SERVER=drone-server:9000
+      - DRONE_SECRET=YWJjZDEyMzQ=
