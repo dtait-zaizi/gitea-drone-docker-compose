@@ -1,4 +1,4 @@
-# Running Drone via docker-compose with Gitea
+# Running Gitea SCM and Drone CI via docker-compose
 
 Instatiate a Gitea local source code repository (similar to GitHub), and a Drrone instance via docker-compose 
 
