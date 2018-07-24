@@ -2,9 +2,9 @@
 
 Instatiate a Gitea local source code repository (similar to GitHub), and a Drrone instance via docker-compose 
 
-#docker-clean.sh
+# docker-clean.sh
 
-Shell script to clenaup docker by deleting images, volumes and networks
+Shell script to clenaup docker by deleting images, volumes and networks, then creates the gitea-network 
 ```
 rm -rf data
 docker system prune -a
