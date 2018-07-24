@@ -74,7 +74,7 @@ services:
         # Optional. Use a single machine account username to clone all repositories.
       - DRONE_GITEA_GIT_USERNAME=taitd
         #Optional. Use a single machine account password to clone all repositories.
-      - DRONE_GITEA_GIT_PASSWORD=1collective
+      - DRONE_GITEA_GIT_PASSWORD=Password1
         Set to true if Gitea is running in private mode.
       - DRONE_GITEA_PRIVATE_MODE=false
         #Set to true to disable SSL verification.
