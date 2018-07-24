@@ -23,8 +23,6 @@ services:
 #
   gitea-server:
     image: gitea/gitea:latest
-#    networks:
-#      - gitea-network
     ports:
       - 8380:3000
     volumes:
@@ -38,8 +36,6 @@ services:
 #
   gitea-db:
     image: postgres:alpine
-#    networks:
-#      - gitea-network
     ports:
       - 5440:5432
     restart: always
@@ -51,8 +47,6 @@ services:
 #
   drone-server:
     image: drone/drone:0.8.5
-#    networks:
-#      - gitea-network
     ports:
       #- 80:8000
       #- 9000
@@ -65,19 +59,18 @@ services:
     environment:
       - DRONE_OPEN=true
       - DRONE_HOST=http://drone-server:8381
-        #Set to true to enable the Gitea driver.
+        # Set to true to enable the Gitea driver.
       - DRONE_GITEA=true
-        #Gitea server address.
-      - DRONE_GITEA_URL=http://gitea-server:3000/ 
-      #- DRONE_GITEA_URL=http://gitea-server:8380/ 
+        # Gitea server address.
+      - DRONE_GITEA_URL=http://gitea-server:3000 
       - DRONE_SECRET=YWJjZDEyMzQ=
         # Optional. Use a single machine account username to clone all repositories.
       - DRONE_GITEA_GIT_USERNAME=taitd
-        #Optional. Use a single machine account password to clone all repositories.
+        # Optional. Use a single machine account password to clone all repositories.
       - DRONE_GITEA_GIT_PASSWORD=Password1
         Set to true if Gitea is running in private mode.
       - DRONE_GITEA_PRIVATE_MODE=false
-        #Set to true to disable SSL verification.
+        # Set to true to disable SSL verification.
       - DRONE_GITEA_SKIP_VERIFY=false
       - DRONE_ADMIN=taitd
       #- DRONE_NETWORK=${DEFAULT_NETWORK}
@@ -85,8 +78,6 @@ services:
 #
   drone-agent:
     image: drone/agent:0.8.5
-#    networks:
-#      - gitea-network
     command: agent
     restart: always
     depends_on:
